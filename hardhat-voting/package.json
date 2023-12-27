@@ -9,7 +9,7 @@
     "lint:fix": "yarn solhint 'contracts/**/*.sol' --fix",
     "format": "yarn prettier --write .",
     "coverage": "yarn hardhat coverage",
-    "voteDeploy": "yarn hardhat deploy --network sepolia & yarn hardhat deploy --network polygonMumbai"
+    "vote-deploy": "yarn hardhat deploy --network sepolia & yarn hardhat deploy --network polygonMumbai & yarn hardhat deploy --network avalancheFujiTestnet"
   },
   "license": "MIT",
   "devDependencies": {
