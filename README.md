@@ -38,10 +38,6 @@ You'll want to set your `SEPOLIA_RPC_URL` and `PRIVATE_KEY` as environment varia
 
 Head over to [faucets.chain.link](https://faucets.chain.link/) and get some tesnet ETH & LINK. You should see the ETH and LINK show up in your metamask. [You can read more on setting up your wallet with LINK.](https://docs.chain.link/docs/deploy-your-first-contract/#install-and-fund-your-metamask-wallet)
 
-3. Setup a Chainlink VRF Subscription ID
-
-Head over to [vrf.chain.link](https://vrf.chain.link/) and setup a new subscription, and get a subscriptionId. You can reuse an old subscription if you already have one.
-
 [You can get the router and LINK address from](https://docs.chain.link/ccip/supported-networks/v1_2_0/testnet) . You should leave this step with:
 
 1. routerAddress
