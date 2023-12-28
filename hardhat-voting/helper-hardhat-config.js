@@ -23,6 +23,11 @@ const networkConfig = {
         router: "0xf694e193200268f9a4868e4aa017a0118c9a8177",
         linkAddress: "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
     },
+    420: {
+        name: "optimisticGoerli",
+        router: "0xcc5a0b910d9e9504a7561934bed294c51285a78d",
+        linkAddress: "0xdc2CC710e42857672E7907CF474a69B63B93089f"
+    },
     1: {
         name: "mainnet",
         keepersUpdateInterval: "30",
@@ -30,7 +35,7 @@ const networkConfig = {
 }
 
 const developmentChains = ["hardhat", "localhost"]
-const VERIFICATION_BLOCK_CONFIRMATIONS = 6
+const VERIFICATION_BLOCK_CONFIRMATIONS = 3
 const frontEndContractsFile = "../nextjs-smartcontract-lottery-fcc/constants/contractAddresses.json"
 const frontEndAbiFile = "../nextjs-smartcontract-lottery-fcc/constants/abi.json"
 
