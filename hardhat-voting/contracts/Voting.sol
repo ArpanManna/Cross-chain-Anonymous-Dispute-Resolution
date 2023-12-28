@@ -10,20 +10,21 @@ import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 
 contract Voting is CCIPReceiver, VRFConsumerBaseV2, ConfirmedOwner {
-    address link;
-    address router;
+    address public link;
+    address public router;
     string public latestMessageText;
     address public latestMessageSender;
-    uint disputeId;
+    string disputeId;
     VRFCoordinatorV2Interface COORDINATOR;
     uint256[] public requestIds;
     uint256 public lastRequestId;
     uint32 callbackGasLimit = 100000;
     uint16 requestConfirmations = 3;
     uint32 numWords = 1;
-    uint totalDisputes = 0;
+    uint public totalDisputes = 0;
 
     struct Vote {
+        string disputeId;
         address disputeRaiser;
         string reason;
         uint duration;
@@ -58,22 +59,35 @@ contract Voting is CCIPReceiver, VRFConsumerBaseV2, ConfirmedOwner {
         LinkTokenInterface(link).approve(router, type(uint256).max);
     }
 
-    mapping(uint => Vote) public disputedProjects; // mapping of disputed project Id to Vote Details
+    mapping(string => Vote) public disputedProjects; // mapping of disputed project Id to Vote Details
+    mapping(address => string[]) public userRaisedDisputes;
+    mapping(uint => string) public disputeIdToHash;
     uint256 votingPeriodConstant = 1 hours;
 
     event RequestSent(uint256 requestId, uint32 numWords);
     event RequestFulfilled(uint256 requestId, uint256[] randomWords);
 
-    function initializeVoting(uint _disputeId, string memory _reason) public {
+    function initializeVoting(string memory _disputeId, string memory _reason) public {
         require(disputedProjects[_disputeId].duration == 0, "Already Initialized!");
+        disputedProjects[_disputeId].disputeId = _disputeId;
         disputedProjects[_disputeId].reason = _reason;
         disputedProjects[_disputeId].totalVoters = 100;
         disputedProjects[_disputeId].disputeRaiser = msg.sender;
         disputedProjects[_disputeId].duration = block.timestamp + votingPeriodConstant;
         totalDisputes++;
+
+        disputeIdToHash[totalDisputes] = _disputeId;
+        userRaisedDisputes[msg.sender].push(_disputeId);
     }
 
-    function checkVotingEligibility(uint _disputeId, uint _VRFdata) internal view returns (bool) {
+    function getUserraisedDisputes() public view returns (string[] memory) {
+        return userRaisedDisputes[msg.sender];
+    }
+
+    function checkVotingEligibility(
+        string memory _disputeId,
+        uint _VRFdata
+    ) internal view returns (bool) {
         if (_VRFdata < disputedProjects[_disputeId].totalVoters) {
             return true;
         }
@@ -81,7 +95,7 @@ contract Voting is CCIPReceiver, VRFConsumerBaseV2, ConfirmedOwner {
     }
 
     function vote(
-        uint _disputeId,
+        string memory _disputeId,
         uint _vote,
         uint64 sourceChainSelector,
         uint64 destinationChainSelector,
@@ -115,9 +129,9 @@ contract Voting is CCIPReceiver, VRFConsumerBaseV2, ConfirmedOwner {
     }
 
     function _ccipReceive(Client.Any2EVMMessage memory message) internal override {
-        (uint _disputeId, string memory _vote, uint randomness) = abi.decode(
+        (string memory _disputeId, string memory _vote, uint randomness) = abi.decode(
             message.data,
-            (uint, string, uint)
+            (string, string, uint)
         );
         latestMessageSender = abi.decode(message.sender, (address));
         require(disputedProjects[_disputeId].duration != 0, "Voting Not Started Yet!");
@@ -139,39 +153,39 @@ contract Voting is CCIPReceiver, VRFConsumerBaseV2, ConfirmedOwner {
     function getOngoingDisputes() public view returns (OnGoingDisputes[] memory) {
         uint ongoingDisputes = 0;
         for (uint i = 1; i <= totalDisputes; i++) {
-            if (disputedProjects[i].duration < block.timestamp) {
+            if (disputedProjects[disputeIdToHash[i]].duration > block.timestamp) {
                 ongoingDisputes++;
             }
         }
         OnGoingDisputes[] memory disputes = new OnGoingDisputes[](ongoingDisputes);
         uint count = 0;
         for (uint i = 1; i <= totalDisputes; i++) {
-            if (disputedProjects[i].duration < block.timestamp) {
-                disputes[count].disputeRaiser = disputedProjects[i].disputeRaiser;
-                disputes[count].reason = disputedProjects[i].reason;
-                disputes[count].duration = disputedProjects[i].duration;
-                disputes[count].totalVoters = disputedProjects[i].totalVoters;
-                disputes[count].votesA = disputedProjects[i].votesA;
-                disputes[count].votesB = disputedProjects[i].votesB;
+            if (disputedProjects[disputeIdToHash[i]].duration > block.timestamp) {
+                disputes[count].disputeRaiser = disputedProjects[disputeIdToHash[i]].disputeRaiser;
+                disputes[count].reason = disputedProjects[disputeIdToHash[i]].reason;
+                disputes[count].duration = disputedProjects[disputeIdToHash[i]].duration;
+                disputes[count].totalVoters = disputedProjects[disputeIdToHash[i]].totalVoters;
+                disputes[count].votesA = disputedProjects[disputeIdToHash[i]].votesA;
+                disputes[count].votesB = disputedProjects[disputeIdToHash[i]].votesB;
                 count++;
             }
         }
         return disputes;
     }
 
-    function getVotingResult(uint _disputeId) public view returns (uint) {
+    function getVotingResult(string memory _disputeId) public view returns (uint) {
         require(disputedProjects[_disputeId].duration != 0, "Voting not started yet");
         require(disputedProjects[_disputeId].duration < block.timestamp, "Voting not over yet!");
         if (disputedProjects[_disputeId].votesA == disputedProjects[_disputeId].votesB) return 0;
         return disputedProjects[_disputeId].votesA > disputedProjects[_disputeId].votesB ? 1 : 2;
     }
 
-    function getVotingDetails(uint _disputeId) public view returns (uint, uint) {
+    function getVotingDetails(string memory _disputeId) public view returns (uint, uint) {
         //Vote storage vote =  projects[projectId];
         return (disputedProjects[_disputeId].votesA, disputedProjects[_disputeId].votesB);
     }
 
-    function compare(string memory str1, string memory str2) internal pure returns (bool) {
+    function compare(string memory str1, string memory str2) public pure returns (bool) {
         return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
     }
 
