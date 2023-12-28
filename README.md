@@ -17,7 +17,8 @@ In decentralized world, the need for transparent, secure, and fair dispute resol
 
 The Justice Protocol aims to develop a fair and transparent cross-chain anonymous dispute resolution process. Existing disputes/ voting is limited to a single chain. If any disputes arises on Ethereum, only users from Ethereum is able to particiapte in the resolution lifecycle. Justice Protocol removes this barrier by including users from any chains. 
 
-![architecture](https://drive.google.com/file/d/1MQcPj0SqW6ZkxPDYXkEiDyGmNIpkNX9I/view?usp=sharing)
+![architecture](https://github.com/ArpanManna/Cross-chain-Anonymous-Dispute-Resolution/blob/main/architecture.png?raw=true)
+
 
 
 ## Features
