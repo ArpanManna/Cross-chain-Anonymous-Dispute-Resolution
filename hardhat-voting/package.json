@@ -8,8 +8,8 @@
     "lint": "yarn solhint 'contracts/*.sol'",
     "lint:fix": "yarn solhint 'contracts/**/*.sol' --fix",
     "format": "yarn prettier --write .",
-    "coverage": "yarn hardhat coverage",
-    "vote-deploy": "yarn hardhat deploy --network sepolia & yarn hardhat deploy --network polygonMumbai & yarn hardhat deploy --network avalancheFujiTestnet"
+    "coverage": "yarn hardhat coverage --testfiles 'test/unit/*.js' --network polygonMumbai",
+    "vote-deploy": "yarn hardhat deploy --network optimisticGoerli & yarn hardhat deploy --network polygonMumbai & yarn hardhat deploy --network avalancheFujiTestnet"
   },
   "license": "MIT",
   "devDependencies": {
