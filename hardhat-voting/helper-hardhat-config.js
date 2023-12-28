@@ -30,19 +30,14 @@ const networkConfig = {
     },
     1: {
         name: "mainnet",
-        keepersUpdateInterval: "30",
     },
 }
 
 const developmentChains = ["hardhat", "localhost"]
 const VERIFICATION_BLOCK_CONFIRMATIONS = 3
-const frontEndContractsFile = "../nextjs-smartcontract-lottery-fcc/constants/contractAddresses.json"
-const frontEndAbiFile = "../nextjs-smartcontract-lottery-fcc/constants/abi.json"
 
 module.exports = {
     networkConfig,
     developmentChains,
-    VERIFICATION_BLOCK_CONFIRMATIONS,
-    frontEndContractsFile,
-    frontEndAbiFile,
+    VERIFICATION_BLOCK_CONFIRMATIONS
 }
