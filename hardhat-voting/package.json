@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "yarn hardhat test",
+    "test": "yarn hardhat test --network polygonMumbai & yarn hardhat test --network avalancheFujiTestnet & yarn hardhat test --network optimisticGoerli",
     "test-staging": "yarn hardhat test --network sepolia",
     "lint": "yarn solhint 'contracts/*.sol'",
     "lint:fix": "yarn solhint 'contracts/**/*.sol' --fix",
