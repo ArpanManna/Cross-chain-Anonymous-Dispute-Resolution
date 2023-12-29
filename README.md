@@ -17,6 +17,12 @@ Deploy:
 yarn hardhat deploy
 ```
 
+To deploy the contract to fuji, mumbai and optimismGoerli
+
+```
+yarn vote-deploy
+```
+
 ## Testing
 
 ```
