@@ -62,7 +62,7 @@ contract Voting is CCIPReceiver, VRFConsumerBaseV2, ConfirmedOwner {
     mapping(string => Vote) public disputedProjects; // mapping of disputed project Id to Vote Details
     mapping(address => string[]) public userRaisedDisputes;
     mapping(uint => string) public disputeIdToHash;
-    uint256 votingPeriodConstant = 1 hours;
+    uint256 votingPeriodConstant = 5 minutes;
 
     event RequestSent(uint256 requestId, uint32 numWords);
     event RequestFulfilled(uint256 requestId, uint256[] randomWords);
